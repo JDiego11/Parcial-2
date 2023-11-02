@@ -92,17 +92,26 @@ void OthelloGame::makeMove(int row, int col) {
     }
 }
 
-bool OthelloGame::isGameOver() {
+bool OthelloGame::isGameOver(Data data) {
+
     int xCount = countTiles('X');
     int oCount = countTiles('O');
     if (xCount + oCount == BOARD_SIZE * BOARD_SIZE) {
+        short int option;
         if (xCount > oCount) {
+            data.NewData("Jugador X", "Jugador O", 1, xCount);
             cout << "Jugador X gana!" << endl;
         } else if (oCount > xCount) {
+            data.NewData("Jugador X", "Jugador O", 2, oCount);
             cout << "Jugador O gana!" << endl;
         } else {
+            data.NewData("Jugador X", "Jugador O", 3, xCount);
             cout << "Es un empate." << endl;
-        }
+        }displayBoard();
+        data.WriteData();
+        cout << "\nInformacion de la partida almacenada con exito \nDesea ver el historial de las partidas jugadas? \n1. Si \n2. No \nIngrese una opcion: ";
+        cin >> option;
+        if (option ==1 ){data.Winner_Historial();}
         return true;
     }
     return false;
@@ -121,14 +130,17 @@ int OthelloGame::countTiles(char player) {
 }
 
 void OthelloGame::play() {
-    while (!isGameOver()) {
+    string FileName;
+    cout << "Ingrese el nombre del archivo donde almacena el historial de juego: "; cin>> FileName;
+    Data data(FileName);
+    cout << "\nBienvenido\n" << endl;
+    while (!isGameOver(data)) {
         displayBoard();
         cout << "Jugador " << currentPlayer << ", Ingrese su movimiento (Fila Columna): ";
         int row, col;
         cin >> row >> col;
         row--; // Convert to 0-based index
         col--;
-
         if (isValidMove(row, col)) {
             makeMove(row, col);
             switchPlayer();
@@ -136,7 +148,6 @@ void OthelloGame::play() {
             cout << "Movimiento no valido. Intente de nuevo." << endl;
         }
     }
-    displayBoard();
 }
 
 void OthelloGame::switchPlayer() {

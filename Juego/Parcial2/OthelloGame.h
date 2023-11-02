@@ -1,6 +1,7 @@
 #ifndef OTHELLOGAME_H
 #define OTHELLOGAME_H
 
+#include "data.h"
 #include <iostream>
 using namespace std;
 
@@ -21,7 +22,7 @@ private:
     void displayBoard();
     bool isValidMove(int row, int col);
     void makeMove(int row, int col);
-    bool isGameOver();
+    bool isGameOver(Data);
     void switchPlayer();
     int countTiles(char player);
     bool isEnclosed(int row, int col, int rowDir, int colDir);

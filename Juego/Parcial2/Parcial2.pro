@@ -5,7 +5,9 @@ CONFIG -= qt
 
 SOURCES += \
         OthelloGame.cpp \
+        data.cpp \
         main.cpp
 
 HEADERS += \
-    OthelloGame.h
+    OthelloGame.h \
+    data.h
