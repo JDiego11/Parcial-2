@@ -3,9 +3,8 @@
 
 #include "data.h"
 #include <iostream>
-using namespace std;
 
-const int BOARD_SIZE = 8;
+using namespace std;
 
 class OthelloGame {
 public:
