@@ -8,7 +8,9 @@ OthelloGame::OthelloGame() {
         board[i] = new char[BOARD_SIZE];
     }
     currentPlayer = 'X';
-    oppositePlayer = 'O'; // Inicializamos la variable
+    oppositePlayer = 'O';
+    hasValidMove = true;
+    consecutivePasses = 0;
     initializeBoard();
 }
 
@@ -33,7 +35,6 @@ void OthelloGame::initializeBoard() {
 
 void OthelloGame::displayBoard() {
     //cout << "\t";
-    //system("cls");
     for(int i=0; i<BOARD_SIZE; i++) {
         //cout << (i + 1) << " ";
         if (i==0) cout << char(218);
@@ -75,7 +76,6 @@ bool OthelloGame::isValidMove(int row, int col) {
         return false;
     }
 
-    // Implement your own rules for a valid move here.
     bool valid = false;
 
     for (int rowDir = -1; rowDir <= 1; rowDir++) {
@@ -126,14 +126,18 @@ bool OthelloGame::isGameOver(Data data) {
 
     int xCount = countTiles('X');
     int oCount = countTiles('O');
-    if (xCount + oCount == BOARD_SIZE * BOARD_SIZE) {
+    //Condición de finalización del juego, si se llena el tablero
+    //o hay dos saltos consecutivos de turno para el mismo jugador
+    if ((xCount + oCount == BOARD_SIZE * BOARD_SIZE) || consecutivePasses >= 2) {
         short int option;
         if (xCount > oCount) {
             data.NewData("Jugador X", "Jugador O", 1, xCount);
-            cout << "Jugador X gana!" << endl;
+            cout << "Jugador X gana con " <<xCount << " fichas en el tablero. ";
+            cout << "El jugador 0 solo tuvo " << oCount << " fichas." << endl;
         } else if (oCount > xCount) {
             data.NewData("Jugador X", "Jugador O", 2, oCount);
-            cout << "Jugador O gana!" << endl;
+            cout << "Jugador 0 gana con " << oCount << " fichas en el tablero. ";
+            cout << "El jugador x solo tuvo " << xCount << " fichas." << endl;
         } else {
             data.NewData("Jugador X", "Jugador O", 3, xCount);
             cout << "Es un empate." << endl;
@@ -159,6 +163,18 @@ int OthelloGame::countTiles(char player) {
     return count;
 }
 
+string OthelloGame::generateValidMoves() {
+    string validMoves = "";
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            if (board[i][j] == ' ' && isValidMove(i, j)) {
+                validMoves += "(" + to_string(i + 1) + " " + to_string(j + 1) + ") ";
+            }
+        }
+    }
+    return validMoves;
+}
+
 void OthelloGame::play() {
     string FileName;
     cout << "Ingrese el nombre del archivo donde almacena el historial de juego: "; cin>> FileName;
@@ -166,18 +182,29 @@ void OthelloGame::play() {
     cout << "\nBienvenido\n" << endl;
     while (!isGameOver(data)) {
         displayBoard();
-        cout << "Jugador " << currentPlayer << ", Ingrese su movimiento (Fila Columna): ";
-        int row, col;
-        cin >> row >> col;
-        row--; // Convert to 0-based index
-        col--;
-        if (isValidMove(row, col)) {
+        string validMoves = generateValidMoves();
+        if (validMoves.empty()) {
             system("cls");
-            makeMove(row, col);
+            cout << "Jugador " << currentPlayer << " No tiene movimeintos validos. Salto de turno." << endl;
             switchPlayer();
+            consecutivePasses++;
         } else {
-            system("cls");
-            cout << "Movimiento no valido. Intente de nuevo." << endl;
+            consecutivePasses = 0;
+            cout << "Movimientos validos posibles para " << currentPlayer << " son: " << validMoves << endl;
+            cout << "Jugador " << currentPlayer << ", Ingrese su movimiento (Fila Columna): ";
+            int row, col;
+            cin >> row >> col;
+            row--; // Convert to 0-based index, Es decir, como ingresa un número n, en el arreglo dicha
+            col--; // posición será n-1
+
+            if (isValidMove(row, col)) {
+                system("cls");
+                makeMove(row, col);
+                switchPlayer();
+            } else {
+                system("cls");
+                cout << "Movimiento no valido. Intente de nuevo." << endl;
+            }
         }
     }
 }

@@ -15,7 +15,9 @@ public:
 private:
     char **board;
     char currentPlayer;
-    char oppositePlayer; // Agregamos esta variable
+    char oppositePlayer;
+    bool hasValidMove;
+    int consecutivePasses;
 
     void initializeBoard();
     void displayBoard();
@@ -24,7 +26,8 @@ private:
     bool isGameOver(Data);
     void switchPlayer();
     int countTiles(char player);
-    bool isEnclosed(int row, int col, int rowDir, int colDir);
+    //bool isEnclosed(int row, int col, int rowDir, int colDir);
+    string generateValidMoves();
 };
 
 #endif // OTHELLOGAME_H
