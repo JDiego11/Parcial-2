@@ -2,7 +2,7 @@
 #define OTHELLOGAME_H
 
 #include "data.h"
-#include <iostream>
+//#include <iostream>
 
 using namespace std;
 
